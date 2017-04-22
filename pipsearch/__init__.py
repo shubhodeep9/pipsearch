@@ -2,7 +2,8 @@
 
 """PipSearch library"""
 
-from __future__ import absolute_import, division, print_function
+
+from .api import search
 
 version = "0.0.1"
 
