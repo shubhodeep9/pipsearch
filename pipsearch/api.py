@@ -6,6 +6,7 @@ import requests
 import re
 
 def search(term):
+
 	url = "https://pypi.python.org/pypi?:action=search&term=" + term
 	req = requests.get(url)
 
@@ -18,7 +19,7 @@ def search(term):
 	for package in packagerows:
 		packagedatatd = package.find_all('td')
 		packagedata = {
-			'name': packagedatatd[0].text.replace('\xa0',' '),
+			'name': packagedatatd[0].text.replace(u'\xa0',' '),
 			'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
 			'weight': int(packagedatatd[1].text),
 			'description': packagedatatd[2].text
