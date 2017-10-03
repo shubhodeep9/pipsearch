@@ -9,5 +9,5 @@ setup(
     author_email='shubhodeep9@gmail.com',
     url='https://github.com/shubhodeep9/pipsearch',
     packages=['pipsearch'],
-    license='Apache'
+    license='Apache 2.0'
  )
