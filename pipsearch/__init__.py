@@ -5,5 +5,3 @@
 
 from .api import search
 
-version = "0.0.1"
-
