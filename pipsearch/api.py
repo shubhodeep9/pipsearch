@@ -5,25 +5,32 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
+
 def search(term):
+    url = "https://pypi.python.org/pypi?:action=search&term=" + term
+    req = requests.get(url)
 
-	url = "https://pypi.python.org/pypi?:action=search&term=" + term
-	req = requests.get(url)
+    soup = BeautifulSoup(req.text, 'html.parser')
 
-	soup = BeautifulSoup(req.text, 'html.parser')
+    packagestable = soup.table
 
-	packagestable = soup.table
-	packagerows = packagestable.find_all('tr', {'class':re.compile('[odd|even]')})
+    # If no package exists then there is no table displayed hence soup.table will be None
+    if packagestable is None:
+        return list()
 
-	packages = list()
-	for package in packagerows:
-		packagedatatd = package.find_all('td')
-		packagedata = {
-			'name': packagedatatd[0].text.replace(u'\xa0',' '),
-			'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
-			'weight': int(packagedatatd[1].text),
-			'description': packagedatatd[2].text
-		}
-		packages.append(packagedata)
+    packagerows = packagestable.find_all('tr', {'class': re.compile('[odd|even]')})
 
-	return (packages)
+    packages = list()
+    for package in packagerows:
+        # if package is None:
+        #     continue
+        packagedatatd = package.find_all('td')
+        packagedata = {
+            'name': packagedatatd[0].text.replace(u'\xa0', ' '),
+            'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
+            'weight': int(packagedatatd[1].text),
+            'description': packagedatatd[2].text
+        }
+        packages.append(packagedata)
+
+    return packages
