@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="pipsearch",
-	  version="2.91",
+	  version="2.92",
 	  description="Search pypi modules",
 	  url="https://github.com/biggydbs/pipsearch",
 	  author="Hitesh Jain",

@@ -50,4 +50,5 @@ def search(term, limit=None):
             packages.append(packagedata)
 
     # returning the result list back
+    print(packages)
     return packages
