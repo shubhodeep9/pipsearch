@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
-def search(term):
+def search(term, limit=None):
 
 	url = "https://pypi.python.org/pypi?:action=search&term=" + term
 	req = requests.get(url)
@@ -16,7 +16,8 @@ def search(term):
 	packagerows = packagestable.find_all('tr', {'class':re.compile('[odd|even]')})
 
 	packages = list()
-	for package in packagerows:
+	
+	for package in packagerows[:limit]:
 		packagedatatd = package.find_all('td')
 		packagedata = {
 			'name': packagedatatd[0].text.replace(u'\xa0',' '),
@@ -25,5 +26,5 @@ def search(term):
 			'description': packagedatatd[2].text
 		}
 		packages.append(packagedata)
-
+	
 	return (packages)
