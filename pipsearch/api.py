@@ -5,8 +5,17 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
-
 def search(term,limit=None):
+    """Search a package in the pypi repositories
+
+    `Arguments:`
+
+    **term** -- the term to search in the pypi repositories
+	
+    **limit** -- the maximum amount of results to find
+    """
+
+    # Constructing a search URL and sending the request
     url = "https://pypi.python.org/pypi?:action=search&term=" + term
     req = requests.get(url)
 
@@ -15,10 +24,12 @@ def search(term,limit=None):
 
     # If no package exists then there is no table displayed hence soup.table will be None
     if packagestable is None:
-        return list()
+        return []
 
     packagerows = packagestable.find_all('tr', {'class': re.compile('[odd|even]')})
-    packages = list()
+    
+    # Constructing the result list
+    packages = []
 
     for package in packagerows[:limit]:
         packagedatatd = package.find_all('td')
@@ -29,5 +40,6 @@ def search(term,limit=None):
             'description': packagedatatd[2].text
         }
         packages.append(packagedata)
-
+        
+    # returning the result list back
     return packages
