@@ -18,16 +18,16 @@ def search(term,limit=None):
         return list()
 
     packagerows = packagestable.find_all('tr', {'class': re.compile('[odd|even]')})
-	packages = list()
+    packages = list()
 
-	for package in packagerows[:limit]:
-		packagedatatd = package.find_all('td')
-		packagedata = {
-			'name': packagedatatd[0].text.replace(u'\xa0',' '),
-			'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
-			'weight': int(packagedatatd[1].text),
-			'description': packagedatatd[2].text
-		}
-		packages.append(packagedata)
+    for package in packagerows[:limit]:
+        packagedatatd = package.find_all('td')
+        packagedata = {
+            'name': packagedatatd[0].text.replace(u'\xa0',' '),
+            'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
+            'weight': int(packagedatatd[1].text),
+            'description': packagedatatd[2].text
+        }
+        packages.append(packagedata)
 
-	return packages
+    return packages
