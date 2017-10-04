@@ -9,5 +9,10 @@ setup(name="pipsearch",
 	  packages=["pipsearch"],
 	  scripts=["bin/api"],
 	  download_url="https://github.com/biggydbs/pipsearch/archive/1.tar.gz",
-	  install_requires=[],
+	  install_requires=['Click'],
+	  py_modules=["bin/api"],
+	  entry_points='''
+        [console_scripts]
+        pipsearch=api:search
+    	''',
 	  zip_safe=False)
