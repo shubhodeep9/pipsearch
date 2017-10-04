@@ -6,8 +6,10 @@ import re
 import requests
 
 from bs4 import BeautifulSoup
+import click
 
-
+@click.command()
+@click.option('--term', default='', help='Term to search?')
 def search(term, limit=None):
     """Search a package in the pypi repositories
 
