@@ -6,12 +6,11 @@ import requests
 import re
 
 
-def search(term):
+def search(term,limit=None):
     url = "https://pypi.python.org/pypi?:action=search&term=" + term
     req = requests.get(url)
 
     soup = BeautifulSoup(req.text, 'html.parser')
-
     packagestable = soup.table
 
     # If no package exists then there is no table displayed hence soup.table will be None
@@ -19,18 +18,16 @@ def search(term):
         return list()
 
     packagerows = packagestable.find_all('tr', {'class': re.compile('[odd|even]')})
+	packages = list()
 
-    packages = list()
-    for package in packagerows:
-        # if package is None:
-        #     continue
-        packagedatatd = package.find_all('td')
-        packagedata = {
-            'name': packagedatatd[0].text.replace(u'\xa0', ' '),
-            'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
-            'weight': int(packagedatatd[1].text),
-            'description': packagedatatd[2].text
-        }
-        packages.append(packagedata)
+	for package in packagerows[:limit]:
+		packagedatatd = package.find_all('td')
+		packagedata = {
+			'name': packagedatatd[0].text.replace(u'\xa0',' '),
+			'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
+			'weight': int(packagedatatd[1].text),
+			'description': packagedatatd[2].text
+		}
+		packages.append(packagedata)
 
-    return packages
+	return packages
