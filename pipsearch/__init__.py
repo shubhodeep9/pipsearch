@@ -2,8 +2,6 @@
 
 """PipSearch library"""
 
-
 from .api import search
 
-version = "0.0.1"
-
+VERSION = "0.0.1"
