@@ -13,6 +13,8 @@ def search(term):
 	soup = BeautifulSoup(req.text, 'html.parser')
 
 	packagestable = soup.table
+	if not packagestable:
+		return None
 	packagerows = packagestable.find_all('tr', {'class':re.compile('[odd|even]')})
 
 	packages = list()
@@ -26,4 +28,4 @@ def search(term):
 		}
 		packages.append(packagedata)
 
-	return (packages)
+	return packages
