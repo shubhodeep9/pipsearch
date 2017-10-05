@@ -67,4 +67,9 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Indexing/Search',
     ],
     test_suite='tests',
+    entry_points={
+        'console_scripts': [
+            'pipsearch=pipsearch.cli:main',
+        ],
+    },
 )
