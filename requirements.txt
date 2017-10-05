@@ -1,8 +1,4 @@
 beautifulsoup4==4.6.0
 bs4==0.0.1
-get==0.0.0
-post==0.0.0
-public==0.0.0
-query-string==0.0.0
-request==0.0.0
+requests==2.18.4
 setupfiles==0.0.50
