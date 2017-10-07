@@ -1,6 +1,10 @@
 import os
 from pytest import fixture
-import requests
+
+
+class MockResponse:
+    def __init__(self, text):
+        self.text = text
 
 
 def mock_pip_html():
@@ -13,9 +17,9 @@ def mock_pip_html():
         return f.read()
 
 
-# avoid spamming pip with requests, monkeypatch requests such it does not actually perform
-# a lookup but is given the mock_pip_html
+# avoid spamming pip with requests, monkeypatch requests such it
+# does not actually perform a lookup but is given the mock_pip_html
 @fixture(autouse=True)
 def patch_requests(monkeypatch):
-    monkeypatch.setattr("requests.models.Response.text", mock_pip_html())
-    monkeypatch.setattr("requests.get", lambda x: requests.Response())
+    text = mock_pip_html()
+    monkeypatch.setattr("requests.get", lambda x: MockResponse(text))
