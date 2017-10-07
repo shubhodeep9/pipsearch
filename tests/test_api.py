@@ -1,4 +1,4 @@
-def test_search():
+def test_search(patch_requests):
     from pipsearch.api import search
     a = search('path', 2)
     expected = [

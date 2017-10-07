@@ -19,7 +19,7 @@ def mock_pip_html():
 
 # avoid spamming pip with requests, monkeypatch requests such it
 # does not actually perform a lookup but is given the mock_pip_html
-@fixture(autouse=True)
+@fixture
 def patch_requests(monkeypatch):
     text = mock_pip_html()
     monkeypatch.setattr("requests.get", lambda x: MockResponse(text))
