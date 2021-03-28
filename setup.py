@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import io
-import os
-
 from setuptools import find_packages, setup
+
+from pipsearch import __version__
 
 # Package meta-data.
 NAME = 'pipsearch'
-DESCRIPTION = 'a library to search through libraries of python 2 and 3 in pipy.'
+DESCRIPTION = 'A library to search through libraries of python 2 and 3 in pipy.'
 URL = 'https://github.com/shubhodeep9/pipsearch'
 EMAIL = 'Shubhodeep Mukherjee'
 AUTHOR = 'shubhodeep9@gmail.com'
@@ -19,22 +18,16 @@ REQUIRED = [
     'requests',
 ]
 
-here = os.path.abspath(os.path.dirname(__file__))
-
 # Import the README and use it as the long-description.
 # This will only work if 'README.rst' is present in your MANIFEST.in file!
-with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     long_description = '\n' + f.read()
 
-# Load the package's __version__.py module as a dictionary.
-about = {}
-with open(os.path.join(here, NAME, '__version__.py')) as f:
-    exec(f.read(), about)
 
 # Where the magic happens:
 setup(
     name=NAME,
-    version=about['__version__'],
+    version=__version__,
     description=DESCRIPTION,
     long_description=long_description,
     author=AUTHOR,

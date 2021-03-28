@@ -2,11 +2,9 @@
 from __future__ import print_function
 
 import sys
+import argparse
 
-from pipsearch import api
-
-LIMIT_COMMAND = '--limit'
-
+from . import api, __version__
 
 def main():
     query, search_limit = parse_options()
@@ -14,31 +12,28 @@ def main():
         print('Enter a search query.')
         sys.exit(0)
 
-    packages = api.search(query, search_limit)
+    packages = api.search(query, limit=search_limit)
     if len(packages) == 0:
         print('No packages found for query "{}".'.format(query))
         return
     print('First {} packages found for query "{}":'.format(len(packages), query))
     for package in packages:
-        print('\n{}\n{}\n{}\n'.format(package['name'], package['description'], package['link']))
-
+        print('  '.join((package['name'], package['version'])), package['description'], package['link'], 
+              sep='\n', end='\n\n')
 
 def parse_options():
-    # if more options are added, the module `argparse` should probably be used instead of this function.
-    limit = 5
-    lim_index = len(sys.argv)
+    parser = argparse.ArgumentParser(description='Search packages from PyPI.')
+    parser.add_argument('term', metavar='term', type=str, nargs='+',
+                        help='Package name to search')
+    parser.add_argument('--limit', type=int, nargs='?', default=None,
+                        help='The limit of the packages in the search results')
+    parser.add_argument('--version', '-V', action='version', version=__version__)
     if len(sys.argv) < 2:
-        return '', 0
+        sys.argv.append("-h")
 
-    lowered_args = [thing.lower() for thing in sys.argv]
-    if LIMIT_COMMAND in lowered_args:
-        lim_index = lowered_args.index(LIMIT_COMMAND)
-        try:
-            limit = int(sys.argv[lim_index + 1])  # get the word after the command and attempt to convert it to an int
-        except (IndexError, ValueError):
-            pass
-        else:
-            limit = max(1, limit)  # limit should be at least 1
-
-    query = ' '.join(sys.argv[1:lim_index])  # exclude the options from the search query
+    namespace = parser.parse_args(sys.argv[1:])
+    limit = namespace.limit
+    if limit is not None and limit < 1:
+        raise ValueError("Limit should be at least 1")
+    query = namespace.term  # exclude the options from the search query
     return query, limit
