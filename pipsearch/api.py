@@ -3,47 +3,53 @@
 relevant PyPI data."""
 from __future__ import absolute_import, division, print_function
 
-import re
 import requests
-
 from bs4 import BeautifulSoup
 
 
 def search(term, limit=None):
     """Search a package in the pypi repositories
-
-    `Arguments:`
-
-    **term** -- the term to search in the pypi repositories
-
-    **limit** -- the maximum amount of results to find
     """
+    def get_packages(soup):
+        nonlocal packagenum
+
+        packagestable = soup.find("ul", {"aria-label": "Search results"})
+        packagerows = packagestable.find_all('li')
+
+        # Constructing the result list
+        for package in packagerows[:limit]:
+            packagedata = {
+                'name': package.find(class_="package-snippet__name").text,
+                'link': 'https://pypi.org' + package.find('a')['href'],
+                'version': package.find(class_="package-snippet__version").text,
+                'description': package.find(class_="package-snippet__description").text
+            }
+            packages.append(packagedata)
+            packagenum += 1
+            if packagenum == limit:
+                return True
+        return False
+
+    packages = []
+    packagenum = 0
+
+    # Get the page number
+    soup = BeautifulSoup(requests.get(
+                "https://pypi.org/search",
+                params={'q': term}
+            ).text,"html.parser")
+    pn = int(soup.find_all(class_="button button-group__button")[-2].text)
+    get_packages(soup)
 
     # Constructing a search URL and sending the request
-    url = "https://pypi.python.org/pypi?:action=search&term=" + term
-    req = requests.get(url)
+    # Concatinating the results from splitting will lead to good results
+    for i in range(2, pn+1):
+        soup = BeautifulSoup(requests.get(
+                "https://pypi.org/search",
+                params={'q': term, 'page': i}
+            ).text, 'html.parser')
+        # Verify that sufficient packages have been searched
+        if get_packages(soup):
+            break
 
-    soup = BeautifulSoup(req.text, 'html.parser')
-    packagestable = soup.table
-
-    # If no package exists then there is no table displayed hence soup.table will be None
-    if packagestable is None:
-        return []
-
-    packagerows = packagestable.find_all('tr', {'class': re.compile('[odd|even]')})
-
-    # Constructing the result list
-    packages = []
-
-    for package in packagerows[:limit]:
-        packagedatatd = package.find_all('td')
-        packagedata = {
-            'name': packagedatatd[0].text.replace(u'\xa0', ' '),
-            'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
-            'weight': int(packagedatatd[1].text),
-            'description': packagedatatd[2].text
-        }
-        packages.append(packagedata)
-
-    # returning the result list back
     return packages
