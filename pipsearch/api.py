@@ -36,12 +36,13 @@ def search(term, limit=None):
     packages = []
 
     for package in packagerows[:limit]:
-        packagedatatd = package.find_all('td')
+        name = package.find('span', {'class': 'package-snippet__name'}).text
         packagedata = {
-            'name': package.find('span', {'class': 'package-snippet__name'}).text,
+            'name': name,
             'link': 'https://pypi.org' + package.a['href'],
             'description': package.find('p', {'class': 'package-snippet__description'}).text,
             'version': package.find('span', {'class': 'package-snippet__version'}).text,
+            'install_instruction': '$ pip install ' + name
         }
         packages.append(packagedata)
 
