@@ -20,17 +20,17 @@ def search(term, limit=None):
     """
 
     # Constructing a search URL and sending the request
-    url = "https://pypi.python.org/pypi?:action=search&term=" + term
+    url = "https://pypi.org/search/?q=" + term
     req = requests.get(url)
 
     soup = BeautifulSoup(req.text, 'html.parser')
-    packagestable = soup.table
+    packagestable = soup.find('ul', {'class': 'unstyled'})
 
     # If no package exists then there is no table displayed hence soup.table will be None
     if packagestable is None:
         return []
 
-    packagerows = packagestable.find_all('tr', {'class': re.compile('[odd|even]')})
+    packagerows = packagestable.findAll('li')
 
     # Constructing the result list
     packages = []
@@ -38,10 +38,10 @@ def search(term, limit=None):
     for package in packagerows[:limit]:
         packagedatatd = package.find_all('td')
         packagedata = {
-            'name': packagedatatd[0].text.replace(u'\xa0', ' '),
-            'link': 'https://pypi.python.org' + packagedatatd[0].find('a')['href'],
-            'weight': int(packagedatatd[1].text),
-            'description': packagedatatd[2].text
+            'name': package.find('span', {'class': 'package-snippet__name'}).text,
+            'link': 'https://pypi.org' + package.a['href'],
+            'description': package.find('p', {'class': 'package-snippet__description'}).text,
+            'version': package.find('span', {'class': 'package-snippet__version'}).text,
         }
         packages.append(packagedata)
 
