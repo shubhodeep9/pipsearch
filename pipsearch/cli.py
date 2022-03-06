@@ -20,7 +20,7 @@ def main():
         return
     print('First {} packages found for query "{}":'.format(len(packages), query))
     for package in packages:
-        print('\n{}:{}\n{}\n{}\n'.format(package['name'], package['version'], package['description'], package['link']))
+        print('\n{}:{}\n{}\n{}\n{}\n'.format(package['name'], package['version'], package['description'], package['link'], package['install_instruction']))
 
 
 def parse_options():
