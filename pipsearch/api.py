@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 import re
 import requests
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag, ResultSet, PageElement
 
 
 def search(term, limit=None):
@@ -30,18 +30,32 @@ def search(term, limit=None):
     if packagestable is None:
         return []
 
-    packagerows = packagestable.findAll('li')
+    if not isinstance(packagestable, Tag):
+        return []
+
+    packagerows: ResultSet[Tag] = packagestable.findAll('li')
 
     # Constructing the result list
     packages = []
 
     for package in packagerows[:limit]:
-        name = package.find('span', {'class': 'package-snippet__name'}).text
+        nameSelector = package.find('span', {'class': 'package-snippet__name'})
+        if nameSelector is None:
+            continue
+        name = nameSelector.text
+
+        link = ""
+        if package.a is not None:
+            href = package.a['href']
+            if isinstance(href, list):
+                href = href[0]
+            link = "https://pypi.org" + href
+        
         packagedata = {
             'name': name,
-            'link': 'https://pypi.org' + package.a['href'],
-            'description': package.find('p', {'class': 'package-snippet__description'}).text,
-            'version': package.find('span', {'class': 'package-snippet__version'}).text,
+            'link': link,
+            'description': (package.find('p', {'class': 'package-snippet__description'}) or Tag()).text,
+            'version': (package.find('span', {'class': 'package-snippet__version'}) or Tag()).text,
             'install_instruction': '$ pip install ' + name
         }
         packages.append(packagedata)
