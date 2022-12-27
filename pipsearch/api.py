@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 import re
 import requests
 
-from bs4 import BeautifulSoup, Tag, ResultSet, PageElement
+from bs4 import BeautifulSoup, Tag, ResultSet
 
 
 def search(term, limit=None):
